@@ -81,6 +81,25 @@ function Desktop() {
           />
         ))}
       </div>
+
+      {/* Render open windows */}
+      {openWindows.map((window) => (
+        <Window
+          key={window.id}
+          id={window.id}
+          title={window.title}
+          initialX={window.x}
+          initialY={window.y}
+          initialWidth={window.width}
+          initialHeight={window.height}
+          initialZIndex={window.zIndex}
+          onClose={closeWindow}
+          // Add more props for drag/resize later
+        >
+          {window.content} {/* Pass content as children */}
+        </Window>
+      ))}
+
       {isStartMenuOpen && <StartMenu />}
       <Taskbar onStartButtonClick={toggleStartMenu} />
     </div>
