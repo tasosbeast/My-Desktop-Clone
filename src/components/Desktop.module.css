@@ -1,0 +1,9 @@
+.desktop {
+  width: 100%;
+  height: 100%;
+  background-image: url("/Windows-11-bg.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative; /* Important for positioning children */
+}

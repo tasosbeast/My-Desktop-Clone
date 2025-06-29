@@ -1,0 +1,19 @@
+body,
+html,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%; /* Make sure HTML and body take full viewport height */
+  overflow: hidden; /* Prevent scrolling if elements go out of bounds */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* Common Windows font */
+  background-color: #000; /* Default background */
+  color: #fff; /* Default text color */
+}
+
+html {
+  font-size: 62.5%; /* 1rem = 10px, for easier scaling */
+}
+
+body {
+  font-size: 1.6rem; /* 16px base font size */
+}

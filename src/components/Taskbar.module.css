@@ -1,0 +1,34 @@
+.taskbar {
+  position: fixed; /* Stays at the bottom regardless of scroll */
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 48px; /* Standard taskbar height */
+  background-color: rgba(26, 33, 44, 0.8); /* Semi-transparent dark color */
+  backdrop-filter: blur(10px); /* For a glassy, modern look */
+  color: white;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box; /* Include padding in height/width */
+  z-index: 1000; /* Ensure it's always on top */
+  border-top: 1.5px solid rgb(74, 79, 87);
+  display: flex;
+  justify-content: space-between; /* Space between start and end */
+  align-items: center; /* Center items vertically */
+  padding: 0.3rem 1rem; /* Padding for spacing */
+}
+
+.taskbarLeft,
+.taskbarCenter,
+.taskbarRight {
+  display: flex;
+  align-items: center;
+  height: 100%; /* Make sure they take full taskbar height */
+}
+
+.taskbarCenter {
+  /* Windows 11 centers the app icons, but not the whole section */
+  /* We'll handle this more precisely when adding icons */
+  justify-content: center; /* Temporarily center content */
+  flex-grow: 1; /* Allow it to take available space */
+}

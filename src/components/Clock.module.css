@@ -1,0 +1,59 @@
+/* src/components/Clock.module.css */
+.clockContainer {
+  color: white;
+  font-size: 0.85em;
+  text-align: right;
+  height: 100%; /* Full height of the taskbar */
+  padding: 0px 8px; /* Some padding around the clock */
+  cursor: default; /* No pointer on clock */
+  border-radius: 4px; /* Slightly rounded corners for modern look */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Vertically center the content */
+  font-size: 1.2rem;
+}
+
+.date {
+  opacity: 0.8;
+  font-size: 1em;
+}
+.clockContainer:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.clockContainer:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(
+    100% + 15px
+  ); /* Position above the clock container + a small gap */
+  left: 100%; /* Center horizontally */
+  transform: translateX(-100%); /* Adjust for true horizontal centering */
+  background-color: rgba(
+    45,
+    45,
+    45,
+    0.95
+  ); /* Darker, slightly opaque background */
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  white-space: nowrap; /* Prevent text from wrapping */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1001; /* Ensure it's above the taskbar and start menu */
+  font-size: 1em; /* Slightly smaller text for tooltip */
+  pointer-events: none; /* Allows clicks/hovers to pass through to elements behind */
+  opacity: 0; /* Hidden by default */
+  transition: opacity 0.3s ease-in-out; /* Smooth fade in/out */
+  display: flex;
+  flex-direction: column; /* Stack date and time vertically */
+  gap: 10px; /* Space between date and time */
+}
+
+/* When clockContainer is hovered, make tooltip visible */
+.clockContainer:hover .tooltip {
+  opacity: 1;
+}
