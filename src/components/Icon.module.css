@@ -1,0 +1,32 @@
+/* src/components/Icon.module.css */
+.icon {
+  width: 90px; /* Standard icon area width */
+  height: 90px; /* Standard icon area height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 5px; /* Spacing between icons */
+  padding: 5px;
+  color: white;
+  font-size: 0.75rem; /* Smaller font for icon names */
+  cursor: pointer;
+  user-select: none; /* Prevent text selection on double click */
+}
+
+.icon:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
+  border-radius: 5px;
+}
+
+.iconImage {
+  width: 48px; /* Icon image size */
+  height: 48px;
+  margin-bottom: 5px;
+}
+
+.iconName {
+  word-wrap: break-word; /* Allow long names to wrap */
+  max-width: 100%;
+}
