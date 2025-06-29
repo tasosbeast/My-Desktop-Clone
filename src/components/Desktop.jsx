@@ -69,6 +69,18 @@ function Desktop() {
   };
   return (
     <div className={styles.desktop}>
+      <div className={styles.desktopIconsContainer}>
+        {" "}
+        {/* New container for icons */}
+        {desktopIcons.map((icon) => (
+          <Icon
+            key={icon.id}
+            name={icon.name}
+            image={icon.image}
+            onDoubleClick={() => openWindow(icon.id, icon.name, icon.content)}
+          />
+        ))}
+      </div>
       {isStartMenuOpen && <StartMenu />}
       <Taskbar onStartButtonClick={toggleStartMenu} />
     </div>
