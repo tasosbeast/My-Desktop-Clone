@@ -7,6 +7,7 @@ import Window from "./Window";
 
 function Desktop() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
+  const [openWindows, setOpenWindows] = useState([]);
 
   const toggleStartMenu = () => {
     setIsStartMenuOpen((prev) => !prev); // Toggle the state
