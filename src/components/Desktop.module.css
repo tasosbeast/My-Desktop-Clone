@@ -7,3 +7,15 @@
   background-repeat: no-repeat;
   position: relative; /* Important for positioning children */
 }
+
+.desktopIconsContainer {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start; /* Align icons to the top */
+  position: absolute;
+  top: 0px; /* Start from the top */
+  left: 0px; /* Start from the left */
+  width: 100%; /* Full width of the desktop */
+  height: calc(100% - 48px); /* Full height minus taskbar */
+}
