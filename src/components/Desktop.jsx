@@ -61,6 +61,12 @@ function Desktop() {
       ]);
     }
   };
+
+  const closeWindow = (id) => {
+    setOpenWindows((prevWindows) =>
+      prevWindows.filter((window) => window.id !== id)
+    );
+  };
   return (
     <div className={styles.desktop}>
       {isStartMenuOpen && <StartMenu />}
