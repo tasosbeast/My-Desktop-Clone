@@ -1,0 +1,72 @@
+/* src/components/Window.module.css */
+.window {
+  position: absolute; /* Crucial for positioning windows freely */
+  background-color: rgba(
+    40,
+    40,
+    40,
+    0.95
+  ); /* Dark semi-transparent background */
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Hide content that goes beyond window bounds */
+  resize: both; /* Enable browser's native resize handles for now (optional) */
+  min-width: 200px;
+  min-height: 150px;
+  color: white;
+}
+
+.titleBar {
+  background-color: rgba(50, 50, 50, 0.9);
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: grab; /* Indicates draggable */
+  user-select: none; /* Prevent text selection on drag */
+}
+
+.windowTitle {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.windowControls {
+  display: flex;
+  gap: 5px;
+}
+
+.controlButton {
+  background-color: transparent;
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.controlButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.controlButton.closeButton:hover {
+  background-color: #e81123; /* Windows close button hover color */
+  color: white;
+}
+
+.windowContent {
+  flex-grow: 1; /* Takes remaining vertical space */
+  padding: 10px;
+  overflow: auto; /* Allow scrolling within window content */
+}
