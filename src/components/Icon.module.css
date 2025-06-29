@@ -1,7 +1,6 @@
 /* src/components/Icon.module.css */
 .icon {
-  width: 90px; /* Standard icon area width */
-  height: 90px; /* Standard icon area height */
+  width: 60px; /* Standard icon area width */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -10,7 +9,7 @@
   margin: 5px; /* Spacing between icons */
   padding: 5px;
   color: white;
-  font-size: 0.75rem; /* Smaller font for icon names */
+  font-size: 1.2rem; /* Smaller font for icon names */
   cursor: pointer;
   user-select: none; /* Prevent text selection on double click */
 }
@@ -21,9 +20,8 @@
 }
 
 .iconImage {
-  width: 48px; /* Icon image size */
-  height: 48px;
-  margin-bottom: 5px;
+  width: 58px; /* Icon image size */
+  height: 58px;
 }
 
 .iconName {
