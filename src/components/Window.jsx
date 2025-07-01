@@ -15,6 +15,8 @@ function Window({
   onFocus,
   onDragStop,
   onMinimize,
+  onMaximize,
+  status,
 }) {
   const [x, setX] = useState(initialX);
   const [y, setY] = useState(initialY);
@@ -25,6 +27,8 @@ function Window({
   const windowRef = useRef(null); // Ref to the window div for dimensions
   const isDragging = useRef(false); // Use useRef to track dragging state
   const dragStart = useRef({ x: 0, y: 0, initialX: 0, initialY: 0 }); // Store drag data
+
+  const isMaximized = status === "maximized";
 
   useEffect(() => {
     setZIndex(initialZIndex); // Update internal zIndex when parent passes a new one
@@ -90,17 +94,27 @@ function Window({
     onFocus(id); // Bring this window to front when clicked
   };
 
-  return (
-    <div
-      ref={windowRef}
-      className={styles.window}
-      style={{
+  const windowStyle = isMaximized
+    ? {
+        top: 0,
+        left: 0,
+        width: "100vw", // Full viewport width
+        height: "calc(100vh - 48px)", // Full viewport height minus taskbar
+        zIndex: zIndex,
+      }
+    : {
         left: `${x}px`,
         top: `${y}px`,
         width: `${width}px`,
         height: `${height}px`,
         zIndex: zIndex,
-      }}
+      };
+
+  return (
+    <div
+      ref={windowRef}
+      className={styles.window}
+      style={windowStyle}
       onClick={handleWindowClick}
     >
       <div className={styles.titleBar} onMouseDown={handleMouseDown}>
@@ -114,7 +128,12 @@ function Window({
             —
           </button>{" "}
           {/* Minimize */}
-          <button className={styles.controlButton}>◻</button> {/* Maximize */}
+          <button
+            className={styles.controlButton}
+            onClick={() => onMaximize(id)}
+          >
+            {isMaximized ? "⧉" : "◻"} {/* Restore Down vs Maximize icon */}
+          </button>
           <button
             className={`${styles.controlButton} ${styles.closeButton}`}
             onClick={() => onClose(id)}

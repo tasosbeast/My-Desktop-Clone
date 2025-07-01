@@ -69,8 +69,18 @@ function Desktop() {
   };
 
   const openWindow = (id, title, content, image) => {
-    // Check if window is already open (optional, but good practice)
-    if (!openWindows.some((window) => window.id === id)) {
+    const existingWindow = openWindows.find((win) => win.id === id);
+
+    if (existingWindow) {
+      // Window already exists.
+      // First, check if it's minimized and restore it if needed.
+      if (existingWindow.status === "minimized") {
+        minimizeWindow(id); // This toggles its status back to 'open'.
+      }
+      // Then, always bring it to the front.
+      bringWindowToFront(id);
+    } else {
+      // Window does not exist, create a new one.
       nextZIndex++;
       setOpenWindows((prevWindows) => [
         ...prevWindows,
@@ -80,15 +90,14 @@ function Desktop() {
           content: content,
           image: image,
           status: "open",
-          x: 100 + prevWindows.length * 20, // Stagger position
+          x: 100 + prevWindows.length * 20,
           y: 100 + prevWindows.length * 20,
           width: 600,
           height: 400,
-          zIndex: prevWindows.length + 1, // Initial z-index
+          zIndex: nextZIndex,
         },
       ]);
-    } else {
-      bringWindowToFront(id);
+      setActiveWindowId(id);
     }
   };
 
@@ -99,6 +108,39 @@ function Desktop() {
     setOpenWindows((prevWindows) =>
       prevWindows.filter((window) => window.id !== id)
     );
+  };
+
+  const maximizeWindow = (id) => {
+    setOpenWindows((prevWindows) =>
+      prevWindows.map((win) => {
+        if (win.id === id) {
+          if (win.status === "maximized") {
+            // Restore from maximized
+            return {
+              ...win,
+              status: "open",
+              x: win.prevX, // Restore previous position and size
+              y: win.prevY,
+              width: win.prevWidth,
+              height: win.prevHeight,
+            };
+          } else {
+            // Maximize the window
+            return {
+              ...win,
+              status: "maximized",
+              prevX: win.x, // Save current position and size
+              prevY: win.y,
+              prevWidth: win.width,
+              prevHeight: win.height,
+            };
+          }
+        }
+        return win;
+      })
+    );
+    // Ensure the maximized window is also the active one
+    setActiveWindowId(id);
   };
 
   const minimizeWindow = (id) => {
@@ -161,6 +203,8 @@ function Desktop() {
             onFocus={bringWindowToFront}
             onDragStop={updateWindowProps}
             onMinimize={minimizeWindow}
+            onMaximize={maximizeWindow}
+            status={window.status}
           >
             {window.content} {/* Pass content as children */}
           </Window>
