@@ -145,7 +145,9 @@ function Desktop() {
         </Window>
       ))}
 
-      {isStartMenuOpen && <StartMenu />}
+      {isStartMenuOpen && (
+        <StartMenu onOpenApp={openWindow} onCloseMenu={toggleStartMenu} />
+      )}
       <Taskbar
         onStartButtonClick={toggleStartMenu}
         openWindows={openWindows}
