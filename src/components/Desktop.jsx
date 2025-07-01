@@ -10,6 +10,7 @@ let nextZIndex = 1001;
 function Desktop() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
   const [openWindows, setOpenWindows] = useState([]);
+  const [activeWindowId, setActiveWindowId] = useState(null);
 
   const desktopIcons = [
     {
@@ -46,6 +47,7 @@ function Desktop() {
   };
 
   const bringWindowToFront = (idToFocus) => {
+    setActiveWindowId(idToFocus);
     setOpenWindows((prevWindows) => {
       // Find the window to bring to front
       const windowIndex = prevWindows.findIndex((win) => win.id === idToFocus);
@@ -62,21 +64,11 @@ function Desktop() {
         return win;
       });
 
-      // Sort the array by zIndex to ensure correct rendering order in React
-      // (Though CSS z-index handles actual stacking, sorting can help conceptual order)
-      // This sort isn't strictly necessary for visual stacking due to CSS z-index,
-      // but can be helpful for internal logic or if you want elements with higher zIndex
-      // to appear later in the DOM (though position absolute removes from flow).
-      // For simplicity, you can skip sorting here if ZIndex in CSS is sufficient.
-      // However, let's keep it to ensure the "focused" window is always at the end
-      // of the array, which can be useful for taskbar ordering later.
-      updatedWindows.sort((a, b) => a.zIndex - b.zIndex);
-
       return updatedWindows;
     });
   };
 
-  const openWindow = (id, title, content) => {
+  const openWindow = (id, title, content, image) => {
     // Check if window is already open (optional, but good practice)
     if (!openWindows.some((window) => window.id === id)) {
       nextZIndex++;
@@ -86,6 +78,7 @@ function Desktop() {
           id: id,
           title: title,
           content: content,
+          image: image,
           x: 100 + prevWindows.length * 20, // Stagger position
           y: 100 + prevWindows.length * 20,
           width: 600,
@@ -99,6 +92,9 @@ function Desktop() {
   };
 
   const closeWindow = (id) => {
+    if (id === activeWindowId) {
+      setActiveWindowId(null);
+    }
     setOpenWindows((prevWindows) =>
       prevWindows.filter((window) => window.id !== id)
     );
@@ -123,7 +119,9 @@ function Desktop() {
             key={icon.id}
             name={icon.name}
             image={icon.image}
-            onDoubleClick={() => openWindow(icon.id, icon.name, icon.content)}
+            onDoubleClick={() =>
+              openWindow(icon.id, icon.name, icon.content, icon.image)
+            }
           />
         ))}
       </div>
@@ -148,7 +146,12 @@ function Desktop() {
       ))}
 
       {isStartMenuOpen && <StartMenu />}
-      <Taskbar onStartButtonClick={toggleStartMenu} openWindows={openWindows} />
+      <Taskbar
+        onStartButtonClick={toggleStartMenu}
+        openWindows={openWindows}
+        onFocus={bringWindowToFront}
+        activeWindowId={activeWindowId}
+      />
     </div>
   );
 }
