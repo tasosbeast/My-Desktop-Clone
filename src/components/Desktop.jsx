@@ -148,7 +148,7 @@ function Desktop() {
       ))}
 
       {isStartMenuOpen && <StartMenu />}
-      <Taskbar onStartButtonClick={toggleStartMenu} />
+      <Taskbar onStartButtonClick={toggleStartMenu} openWindows={openWindows} />
     </div>
   );
 }
