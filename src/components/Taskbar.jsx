@@ -9,6 +9,7 @@ export default function Taskbar({
   openWindows,
   onFocus,
   activeWindowId,
+  onMinimize,
 }) {
   return (
     <div className={styles.taskbar}>
@@ -20,8 +21,21 @@ export default function Taskbar({
           <TaskbarIcon
             key={win.id}
             window={win}
-            onFocus={onFocus}
             isActive={win.id === activeWindowId}
+            onFocus={() => {
+              // If the window is already active and not minimized, minimize it.
+              if (win.id === activeWindowId && win.status !== "minimized") {
+                onMinimize(win.id);
+              } else {
+                // Otherwise, do the standard restore/focus behavior.
+                // This part handles both restoring a minimized window and focusing an inactive one.
+                if (win.status === "minimized") {
+                  onMinimize(win.id); // This toggles it back to 'open'
+                }
+                onFocus(win.id); // This sets it as active and brings it to the front
+              }
+            }}
+            onMiddleClick={() => onMinimize(win.id)}
           />
         ))}
       </div>

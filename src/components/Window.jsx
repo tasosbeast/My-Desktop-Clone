@@ -14,6 +14,7 @@ function Window({
   onClose,
   onFocus,
   onDragStop,
+  onMinimize,
 }) {
   const [x, setX] = useState(initialX);
   const [y, setY] = useState(initialY);
@@ -106,7 +107,13 @@ function Window({
         <span className={styles.windowTitle}>{title}</span>
         <div className={styles.windowControls}>
           {/* Minimize, Maximize buttons (functional later) */}
-          <button className={styles.controlButton}>—</button> {/* Minimize */}
+          <button
+            className={styles.controlButton}
+            onClick={() => onMinimize(id)}
+          >
+            —
+          </button>{" "}
+          {/* Minimize */}
           <button className={styles.controlButton}>◻</button> {/* Maximize */}
           <button
             className={`${styles.controlButton} ${styles.closeButton}`}

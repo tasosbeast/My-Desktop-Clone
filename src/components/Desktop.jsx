@@ -79,6 +79,7 @@ function Desktop() {
           title: title,
           content: content,
           image: image,
+          status: "open",
           x: 100 + prevWindows.length * 20, // Stagger position
           y: 100 + prevWindows.length * 20,
           width: 600,
@@ -98,6 +99,23 @@ function Desktop() {
     setOpenWindows((prevWindows) =>
       prevWindows.filter((window) => window.id !== id)
     );
+  };
+
+  const minimizeWindow = (id) => {
+    setOpenWindows((prevWindows) =>
+      prevWindows.map((win) => {
+        if (win.id === id) {
+          // Toggle between minimized and open
+          const newStatus = win.status === "minimized" ? "open" : "minimized";
+          return { ...win, status: newStatus };
+        }
+        return win;
+      })
+    );
+    // If we are minimizing the active window, clear the active ID
+    if (id === activeWindowId) {
+      setActiveWindowId(null);
+    }
   };
 
   const updateWindowProps = (id, newX, newY, newWidth, newHeight) => {
@@ -127,23 +145,26 @@ function Desktop() {
       </div>
 
       {/* Render open windows */}
-      {openWindows.map((window) => (
-        <Window
-          key={window.id}
-          id={window.id}
-          title={window.title}
-          initialX={window.x}
-          initialY={window.y}
-          initialWidth={window.width}
-          initialHeight={window.height}
-          initialZIndex={window.zIndex}
-          onClose={closeWindow}
-          onFocus={bringWindowToFront}
-          onDragStop={updateWindowProps}
-        >
-          {window.content} {/* Pass content as children */}
-        </Window>
-      ))}
+      {openWindows
+        .filter((win) => win.status !== "minimized")
+        .map((window) => (
+          <Window
+            key={window.id}
+            id={window.id}
+            title={window.title}
+            initialX={window.x}
+            initialY={window.y}
+            initialWidth={window.width}
+            initialHeight={window.height}
+            initialZIndex={window.zIndex}
+            onClose={closeWindow}
+            onFocus={bringWindowToFront}
+            onDragStop={updateWindowProps}
+            onMinimize={minimizeWindow}
+          >
+            {window.content} {/* Pass content as children */}
+          </Window>
+        ))}
 
       {isStartMenuOpen && (
         <StartMenu onOpenApp={openWindow} onCloseMenu={toggleStartMenu} />
@@ -153,6 +174,7 @@ function Desktop() {
         openWindows={openWindows}
         onFocus={bringWindowToFront}
         activeWindowId={activeWindowId}
+        onMinimize={minimizeWindow}
       />
     </div>
   );
