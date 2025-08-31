@@ -4,6 +4,7 @@ import Taskbar from "./Taskbar";
 import StartMenu from "./StartMenu";
 import Icon from "./Icon";
 import Window from "./Window";
+import ContextMenu from "./ContextMenu";
 
 let nextZIndex = 1001;
 
@@ -11,8 +12,15 @@ function Desktop() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
   const [openWindows, setOpenWindows] = useState([]);
   const [activeWindowId, setActiveWindowId] = useState(null);
-
-  const desktopIcons = [
+  const [contextMenu, setContextMenu] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+    type: null,
+    targetId: null,
+  });
+  const [renamingIcon, setRenamingIcon] = useState(null);
+  const [desktopIcons, setDesktopIcons] = useState([
     {
       id: "recycle-bin",
       name: "Recycle Bin",
@@ -41,7 +49,7 @@ function Desktop() {
       type: "app",
       content: "github desktop app",
     },
-  ];
+  ]);
   const toggleStartMenu = () => {
     setIsStartMenuOpen((prev) => !prev); // Toggle the state
   };
@@ -169,8 +177,114 @@ function Desktop() {
       )
     );
   };
+
+  const handleDesktopRightClick = (e) => {
+    e.preventDefault();
+    setContextMenu({
+      visible: true,
+      x: e.clientX,
+      y: e.clientY,
+      type: "desktop",
+      targetId: null,
+    });
+  };
+
+  const handleIconRightClick = (e, iconId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({
+      visible: true,
+      x: e.clientX,
+      y: e.clientY,
+      type: "icon",
+      targetId: iconId,
+    });
+  };
+
+  const closeContextMenu = () => {
+    setContextMenu({
+      visible: false,
+      x: 0,
+      y: 0,
+      type: null,
+      targetId: null,
+    });
+  };
+
+  const getDesktopContextMenuItems = () => [
+    {
+      icon: "🖼️",
+      label: "Personalize",
+      action: () => console.log("Personalize clicked"),
+    },
+    { type: "separator" },
+    {
+      icon: "📁",
+      label: "New Folder",
+      action: () => console.log("New folder clicked"),
+    },
+    {
+      icon: "📄",
+      label: "New Document",
+      action: () => console.log("New document clicked"),
+    },
+    { type: "separator" },
+    {
+      icon: "🔄",
+      label: "Refresh",
+      shortcut: "F5",
+      action: () => console.log("Refresh clicked"),
+    },
+  ];
+
+  const getIconContextMenuItems = (iconId) => {
+    const icon = desktopIcons.find((i) => i.id === iconId);
+    return [
+      {
+        icon: "🚀",
+        label: "Open",
+        action: () => openWindow(icon.id, icon.name, icon.content, icon.image),
+      },
+      { type: "separator" },
+      {
+        icon: "✏️",
+        label: "Rename",
+        action: () => startRenaming(iconId),
+      },
+      {
+        icon: "🗑️",
+        label: "Delete",
+        action: () => console.log(`Delete ${iconId}`),
+      },
+      { type: "separator" },
+      {
+        icon: "⚙️",
+        label: "Properties",
+        action: () => console.log(`Properties of ${iconId}`),
+      },
+    ];
+  };
+
+  const startRenaming = (iconId) => {
+    setRenamingIcon(iconId);
+  };
+
+  const finishRenaming = (iconId, newName) => {
+    if (newName.trim() && newName.trim() !== "") {
+      setDesktopIcons((prevIcons) =>
+        prevIcons.map((icon) =>
+          icon.id === iconId ? { ...icon, name: newName.trim() } : icon
+        )
+      );
+    }
+    setRenamingIcon(null);
+  };
+
+  const cancelRenaming = () => {
+    setRenamingIcon(null);
+  };
   return (
-    <div className={styles.desktop}>
+    <div className={styles.desktop} onContextMenu={handleDesktopRightClick}>
       <div className={styles.desktopIconsContainer}>
         {" "}
         {/* New container for icons */}
@@ -182,6 +296,10 @@ function Desktop() {
             onDoubleClick={() =>
               openWindow(icon.id, icon.name, icon.content, icon.image)
             }
+            onRightClick={(e) => handleIconRightClick(e, icon.id)}
+            isRenaming={renamingIcon === icon.id}
+            onFinishRename={(newName) => finishRenaming(icon.id, newName)}
+            onCancelRename={cancelRenaming}
           />
         ))}
       </div>
@@ -209,6 +327,21 @@ function Desktop() {
             {window.content} {/* Pass content as children */}
           </Window>
         ))}
+
+      {/* Context Menu */}
+      <ContextMenu
+        visible={contextMenu.visible}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        items={
+          contextMenu.type === "desktop"
+            ? getDesktopContextMenuItems()
+            : contextMenu.type === "icon"
+            ? getIconContextMenuItems(contextMenu.targetId)
+            : []
+        }
+        onClose={closeContextMenu}
+      />
 
       {isStartMenuOpen && (
         <StartMenu onOpenApp={openWindow} onCloseMenu={toggleStartMenu} />
