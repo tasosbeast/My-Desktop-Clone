@@ -9,6 +9,8 @@ import WallpaperSelector from "./WallpaperSelector";
 import CreateShortcutDialog from "./CreateShortcutDialog";
 import Notepad from "./Notepad";
 import RecycleBin from "./RecycleBin";
+import Calculator from "./Calculator";
+import FileExplorer from "./FileExplorer";
 
 let nextZIndex = 1001;
 
@@ -53,10 +55,26 @@ const defaultDesktopIcons = [
   {
     id: "notepad",
     name: "Notepad",
-    image: "/icons8-windows-11.svg", // Using Windows icon as placeholder
+    image: "/notepad-icon.svg",
     type: "app",
     content: "Text Editor",
     app: "notepad", // Special identifier for app
+  },
+  {
+    id: "calculator",
+    name: "Calculator",
+    image: "/calculator-icon.svg",
+    type: "app",
+    content: "Calculator",
+    app: "calculator", // Special identifier for app
+  },
+  {
+    id: "file-explorer",
+    name: "File Explorer",
+    image: "/file-explorer-icon.svg",
+    type: "app",
+    content: "File Manager",
+    app: "file-explorer", // Special identifier for app
   },
   {
     id: "vscode",
@@ -233,6 +251,16 @@ function Desktop() {
           width: 800,
           height: 600,
         };
+      } else if (appType === "calculator") {
+        windowConfig = {
+          width: 400,
+          height: 500,
+        };
+      } else if (appType === "file-explorer") {
+        windowConfig = {
+          width: 900,
+          height: 600,
+        };
       }
 
       setOpenWindows((prevWindows) => [
@@ -361,7 +389,7 @@ function Desktop() {
     });
   };
 
-  const handleDesktopClick = (e) => {
+  const handleDesktopClick = () => {
     // Close start menu if clicking outside it
     if (isStartMenuOpen) {
       setIsStartMenuOpen(false);
@@ -706,6 +734,20 @@ function Desktop() {
           >
             {window.appType === "notepad" ? (
               <Notepad
+                onClose={() => closeWindow(window.id)}
+                onMinimize={() => minimizeWindow(window.id)}
+                onMaximize={() => maximizeWindow(window.id)}
+                isMaximized={window.status === "maximized"}
+              />
+            ) : window.appType === "calculator" ? (
+              <Calculator
+                onClose={() => closeWindow(window.id)}
+                onMinimize={() => minimizeWindow(window.id)}
+                onMaximize={() => maximizeWindow(window.id)}
+                isMaximized={window.status === "maximized"}
+              />
+            ) : window.appType === "file-explorer" ? (
+              <FileExplorer
                 onClose={() => closeWindow(window.id)}
                 onMinimize={() => minimizeWindow(window.id)}
                 onMaximize={() => maximizeWindow(window.id)}

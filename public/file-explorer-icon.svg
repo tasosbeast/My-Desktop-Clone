@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <defs>
+    <linearGradient id="folderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="windowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F8F9FA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E9ECEF;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Main Folder -->
+  <path d="M16 28 L16 76 L80 76 L80 32 L52 32 L44 24 L16 24 Z" 
+        fill="url(#folderGrad)" 
+        stroke="#E6A100" 
+        stroke-width="2" 
+        filter="url(#shadow)"/>
+  
+  <!-- Folder Tab -->
+  <path d="M16 24 L44 24 L52 32 L32 32 Z" 
+        fill="#FFE55C" 
+        stroke="#E6A100" 
+        stroke-width="1"/>
+  
+  <!-- Window Frame -->
+  <rect x="28" y="36" width="40" height="32" rx="4" ry="4" 
+        fill="url(#windowGrad)" 
+        stroke="#CED4DA" 
+        stroke-width="1"/>
+  
+  <!-- Window Title Bar -->
+  <rect x="28" y="36" width="40" height="8" rx="4" ry="4" 
+        fill="#0078D4"/>
+  <rect x="28" y="40" width="40" height="4" 
+        fill="#0078D4"/>
+  
+  <!-- Window Controls -->
+  <circle cx="62" cy="40" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="58" cy="40" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="54" cy="40" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+  
+  <!-- File Icons -->
+  <rect x="32" y="48" width="6" height="8" rx="1" ry="1" fill="#4ECDC4"/>
+  <rect x="40" y="48" width="6" height="8" rx="1" ry="1" fill="#FF6B6B"/>
+  <rect x="48" y="48" width="6" height="8" rx="1" ry="1" fill="#45B7D1"/>
+  <rect x="56" y="48" width="6" height="8" rx="1" ry="1" fill="#96CEB4"/>
+  
+  <!-- File Text Lines -->
+  <line x1="33" y1="50" x2="37" y2="50" stroke="white" stroke-width="0.5"/>
+  <line x1="33" y1="52" x2="36" y2="52" stroke="white" stroke-width="0.5"/>
+  
+  <line x1="41" y1="50" x2="45" y2="50" stroke="white" stroke-width="0.5"/>
+  <line x1="41" y1="52" x2="44" y2="52" stroke="white" stroke-width="0.5"/>
+  
+  <line x1="49" y1="50" x2="53" y2="50" stroke="white" stroke-width="0.5"/>
+  <line x1="49" y1="52" x2="52" y2="52" stroke="white" stroke-width="0.5"/>
+  
+  <line x1="57" y1="50" x2="61" y2="50" stroke="white" stroke-width="0.5"/>
+  <line x1="57" y1="52" x2="60" y2="52" stroke="white" stroke-width="0.5"/>
+  
+  <!-- Explorer Badge -->
+  <circle cx="72" cy="72" r="10" fill="#0078D4" stroke="#FFFFFF" stroke-width="2"/>
+  <path d="M68,68 L72,72 L76,68 M72,68 L72,76" 
+        fill="none" 
+        stroke="white" 
+        stroke-width="2" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+</svg>

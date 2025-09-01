@@ -12,6 +12,9 @@ function CreateShortcutDialog({ visible, onCreateShortcut, onCancel }) {
     "/icons8-visual-studio-code.svg",
     "/icons8-google-chrome.svg",
     "/icons8-github.svg",
+    "/notepad-icon.svg",
+    "/calculator-icon.svg",
+    "/file-explorer-icon.svg",
     "/icons8-windows-11.svg",
   ];
 

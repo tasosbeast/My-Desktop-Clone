@@ -1,0 +1,455 @@
+.fileExplorer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #f8f9fa;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Title Bar */
+.titleBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #0078d4, #106ebe);
+  color: white;
+  padding: 8px 16px;
+  height: 32px;
+  user-select: none;
+}
+
+.titleContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.icon {
+  font-size: 16px;
+}
+
+.windowControls {
+  display: flex;
+  gap: 4px;
+}
+
+.minimizeBtn,
+.maximizeBtn,
+.closeBtn {
+  width: 32px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.minimizeBtn:hover,
+.maximizeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.closeBtn:hover {
+  background: #e81123;
+}
+
+/* Menu Bar */
+.menuBar {
+  display: flex;
+  background: #f3f3f3;
+  border-bottom: 1px solid #e1e1e1;
+  padding: 4px 8px;
+}
+
+.menuItem {
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.menuItem:hover {
+  background: #e1e1e1;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-bottom: 1px solid #e1e1e1;
+  padding: 8px 16px;
+  gap: 16px;
+}
+
+.navigationButtons {
+  display: flex;
+  gap: 4px;
+}
+
+.navBtn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #d1d1d1;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.navBtn:hover:not(:disabled) {
+  background: #f0f0f0;
+  border-color: #0078d4;
+}
+
+.navBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.addressBar {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  background: white;
+  border: 1px solid #d1d1d1;
+  border-radius: 4px;
+  padding: 6px 12px;
+  gap: 8px;
+}
+
+.addressIcon {
+  color: #666;
+}
+
+.addressPath {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.pathSegment {
+  padding: 2px 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.pathSegment:hover {
+  background: #e1e1e1;
+}
+
+.pathSeparator {
+  color: #666;
+  margin: 0 2px;
+}
+
+.viewControls {
+  display: flex;
+  gap: 2px;
+}
+
+.viewBtn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #d1d1d1;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.viewBtn:hover {
+  background: #f0f0f0;
+}
+
+.viewBtn.active {
+  background: #0078d4;
+  color: white;
+  border-color: #0078d4;
+}
+
+/* Main Content */
+.mainContent {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  background: #fafafa;
+  border-right: 1px solid #e1e1e1;
+  padding: 16px 8px;
+  overflow-y: auto;
+}
+
+.sidebarSection {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px 12px;
+}
+
+.sidebarItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  gap: 12px;
+  margin-bottom: 2px;
+}
+
+.sidebarItem:hover {
+  background: #e1e1e1;
+}
+
+.sidebarItem.active {
+  background: #e3f2fd;
+  color: #0078d4;
+}
+
+.sidebarIcon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+.sidebarLabel {
+  font-size: 13px;
+}
+
+/* File List */
+.fileList {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.listHeader {
+  display: flex;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e1e1e1;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+}
+
+.columnHeader {
+  padding: 4px 8px;
+  border-right: 1px solid #e1e1e1;
+}
+
+.columnHeader:last-child {
+  border-right: none;
+}
+
+.fileItems {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+/* List View */
+.fileItems.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fileItems.list .fileItem {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  gap: 12px;
+}
+
+.fileItems.list .fileItem:hover {
+  background: #f0f0f0;
+}
+
+.fileItems.list .fileItem.selected {
+  background: #e3f2fd;
+  color: #0078d4;
+}
+
+/* Icon View */
+.fileItems.icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+.fileItems.icons .fileItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-align: center;
+  gap: 8px;
+}
+
+.fileItems.icons .fileItem:hover {
+  background: #f0f0f0;
+}
+
+.fileItems.icons .fileItem.selected {
+  background: #e3f2fd;
+  color: #0078d4;
+}
+
+.fileItems.icons .fileIcon {
+  font-size: 32px;
+}
+
+.fileItems.icons .fileName {
+  font-size: 13px;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+/* Details View */
+.fileItems.details {
+  display: flex;
+  flex-direction: column;
+}
+
+.fileItems.details .fileItem {
+  display: flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.fileItems.details .fileItem:hover {
+  background: #f8f9fa;
+}
+
+.fileItems.details .fileItem.selected {
+  background: #e3f2fd;
+  color: #0078d4;
+}
+
+.fileItems.details .fileIcon {
+  width: 8%;
+  text-align: center;
+  font-size: 16px;
+}
+
+.fileItems.details .fileName {
+  width: 32%;
+  padding: 0 8px;
+  font-size: 13px;
+}
+
+.fileItems.details .fileModified {
+  width: 20%;
+  padding: 0 8px;
+  font-size: 13px;
+  color: #666;
+}
+
+.fileItems.details .fileType {
+  width: 15%;
+  padding: 0 8px;
+  font-size: 13px;
+  color: #666;
+  text-transform: capitalize;
+}
+
+.fileItems.details .fileSize {
+  width: 15%;
+  padding: 0 8px;
+  font-size: 13px;
+  color: #666;
+  text-align: right;
+}
+
+/* Status Bar */
+.statusBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+  border-top: 1px solid #e1e1e1;
+  padding: 6px 16px;
+  font-size: 12px;
+  color: #666;
+}
+
+.itemCount {
+  font-weight: 500;
+}
+
+.pathInfo {
+  font-family: "Consolas", "Courier New", monospace;
+}
+
+/* Scrollbar Styling */
+.fileItems::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.fileItems::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.fileItems::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.fileItems::-webkit-scrollbar-thumb:hover,
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}

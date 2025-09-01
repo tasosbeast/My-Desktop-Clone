@@ -1,0 +1,319 @@
+.calculator {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #f0f0f0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+}
+
+.menuBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #d0d0d0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.title {
+  color: #333;
+}
+
+.memoryIndicator {
+  display: flex;
+  align-items: center;
+}
+
+.memoryBadge {
+  background-color: #0078d4;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.display {
+  background-color: #ffffff;
+  padding: 16px;
+  border-bottom: 1px solid #d0d0d0;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.historyArea {
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.historyEntry {
+  font-size: 12px;
+  color: #666;
+  text-align: right;
+  opacity: 0.8;
+}
+
+.mainDisplay {
+  font-size: 32px;
+  font-weight: 300;
+  text-align: right;
+  color: #333;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-top: 8px;
+}
+
+.buttonGrid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 1px;
+  background-color: #d0d0d0;
+  padding: 1px;
+}
+
+/* Button base styles */
+.calculator button {
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  background-color: #f9f9f9;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calculator button:hover {
+  filter: brightness(0.95);
+}
+
+.calculator button:active {
+  filter: brightness(0.9);
+  transform: scale(0.98);
+}
+
+/* Memory buttons */
+.memoryButton {
+  background-color: #e6e6e6 !important;
+  color: #666 !important;
+  font-size: 14px !important;
+}
+
+.memoryButton:hover {
+  background-color: #ddd !important;
+}
+
+/* Function buttons */
+.functionButton {
+  background-color: #e6e6e6 !important;
+  color: #333 !important;
+}
+
+.functionButton:hover {
+  background-color: #ddd !important;
+}
+
+/* Clear buttons */
+.clearButton {
+  background-color: #ff6b6b !important;
+  color: white !important;
+}
+
+.clearButton:hover {
+  background-color: #ff5252 !important;
+}
+
+/* Operator buttons */
+.operatorButton {
+  background-color: #0078d4 !important;
+  color: white !important;
+  font-size: 18px !important;
+}
+
+.operatorButton:hover {
+  background-color: #106ebe !important;
+}
+
+/* Number buttons */
+.numberButton {
+  background-color: #ffffff !important;
+  color: #333 !important;
+  font-size: 18px !important;
+}
+
+.numberButton:hover {
+  background-color: #f5f5f5 !important;
+}
+
+/* Equals button */
+.equalsButton {
+  background-color: #0078d4 !important;
+  color: white !important;
+  font-size: 18px !important;
+  grid-row: span 2;
+}
+
+.equalsButton:hover {
+  background-color: #106ebe !important;
+}
+
+/* Zero button (spans 2 columns) */
+.zeroButton {
+  grid-column: span 2;
+}
+
+/* Grid positioning for specific buttons */
+.calculator .buttonGrid button:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+.calculator .buttonGrid button:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1;
+}
+.calculator .buttonGrid button:nth-child(3) {
+  grid-column: 3;
+  grid-row: 1;
+}
+.calculator .buttonGrid button:nth-child(4) {
+  grid-column: 4;
+  grid-row: 1;
+}
+.calculator .buttonGrid button:nth-child(5) {
+  grid-column: 5;
+  grid-row: 1;
+}
+
+.calculator .buttonGrid button:nth-child(6) {
+  grid-column: 1;
+  grid-row: 2;
+}
+.calculator .buttonGrid button:nth-child(7) {
+  grid-column: 2;
+  grid-row: 2;
+}
+.calculator .buttonGrid button:nth-child(8) {
+  grid-column: 3;
+  grid-row: 2;
+}
+.calculator .buttonGrid button:nth-child(9) {
+  grid-column: 4;
+  grid-row: 2;
+}
+.calculator .buttonGrid button:nth-child(10) {
+  grid-column: 5;
+  grid-row: 2;
+}
+
+.calculator .buttonGrid button:nth-child(11) {
+  grid-column: 1;
+  grid-row: 3;
+}
+.calculator .buttonGrid button:nth-child(12) {
+  grid-column: 2;
+  grid-row: 3;
+}
+.calculator .buttonGrid button:nth-child(13) {
+  grid-column: 3;
+  grid-row: 3;
+}
+.calculator .buttonGrid button:nth-child(14) {
+  grid-column: 4;
+  grid-row: 3;
+}
+.calculator .buttonGrid button:nth-child(15) {
+  grid-column: 5;
+  grid-row: 3;
+}
+
+.calculator .buttonGrid button:nth-child(16) {
+  grid-column: 1;
+  grid-row: 4;
+}
+.calculator .buttonGrid button:nth-child(17) {
+  grid-column: 2;
+  grid-row: 4;
+}
+.calculator .buttonGrid button:nth-child(18) {
+  grid-column: 3;
+  grid-row: 4;
+}
+.calculator .buttonGrid button:nth-child(19) {
+  grid-column: 4;
+  grid-row: 4;
+}
+
+.calculator .buttonGrid button:nth-child(20) {
+  grid-column: 1;
+  grid-row: 5;
+}
+.calculator .buttonGrid button:nth-child(21) {
+  grid-column: 2;
+  grid-row: 5;
+}
+.calculator .buttonGrid button:nth-child(22) {
+  grid-column: 3;
+  grid-row: 5;
+}
+
+.calculator .buttonGrid button:nth-child(23) {
+  grid-column: 1;
+  grid-row: 6;
+}
+.calculator .buttonGrid button:nth-child(24) {
+  grid-column: 2;
+  grid-row: 6;
+}
+.calculator .buttonGrid button:nth-child(25) {
+  grid-column: 3;
+  grid-row: 6;
+}
+.calculator .buttonGrid button:nth-child(26) {
+  grid-column: 4;
+  grid-row: 5;
+  grid-row-end: 7;
+}
+
+.calculator .buttonGrid button:nth-child(27) {
+  grid-column: 1;
+  grid-row: 7;
+  grid-column-end: 3;
+}
+.calculator .buttonGrid button:nth-child(28) {
+  grid-column: 3;
+  grid-row: 7;
+}
+
+/* Responsive adjustments */
+@media (max-height: 600px) {
+  .mainDisplay {
+    font-size: 24px;
+  }
+
+  .calculator button {
+    font-size: 14px;
+  }
+
+  .historyArea {
+    min-height: 40px;
+  }
+}
+
+/* Focus styles for accessibility */
+.calculator button:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: -2px;
+}

@@ -15,10 +15,26 @@ function StartMenu({ onOpenApp, onCloseMenu, onCreateShortcut }) {
     {
       id: "notepad",
       name: "Notepad",
-      image: "/icons8-windows-11.svg", // Using Windows icon as placeholder
+      image: "/notepad-icon.svg",
       type: "app",
       content: "Text Editor",
       app: "notepad", // Special identifier for app
+    },
+    {
+      id: "calculator",
+      name: "Calculator",
+      image: "/calculator-icon.svg",
+      type: "app",
+      content: "Calculator",
+      app: "calculator", // Special identifier for app
+    },
+    {
+      id: "file-explorer",
+      name: "File Explorer",
+      image: "/file-explorer-icon.svg",
+      type: "app",
+      content: "File Manager",
+      app: "file-explorer", // Special identifier for app
     },
     {
       id: "vscode",
