@@ -7,6 +7,8 @@ import Window from "./Window";
 import ContextMenu from "./ContextMenu";
 import WallpaperSelector from "./WallpaperSelector";
 import CreateShortcutDialog from "./CreateShortcutDialog";
+import Notepad from "./Notepad";
+import RecycleBin from "./RecycleBin";
 
 let nextZIndex = 1001;
 
@@ -47,6 +49,14 @@ const defaultDesktopIcons = [
     image: "/recycle-bin.png",
     type: "system",
     content: "Deleted Items",
+  },
+  {
+    id: "notepad",
+    name: "Notepad",
+    image: "/icons8-windows-11.svg", // Using Windows icon as placeholder
+    type: "app",
+    content: "Text Editor",
+    app: "notepad", // Special identifier for app
   },
   {
     id: "vscode",
@@ -110,10 +120,33 @@ const saveDesktopIcons = (icons) => {
   }
 };
 
+// Function to load recycle bin from localStorage
+const loadRecycleBin = () => {
+  try {
+    const saved = localStorage.getItem("recycleBin");
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch (error) {
+    console.error("Error loading recycle bin:", error);
+  }
+  return [];
+};
+
+// Function to save recycle bin to localStorage
+const saveRecycleBin = (items) => {
+  try {
+    localStorage.setItem("recycleBin", JSON.stringify(items));
+  } catch (error) {
+    console.error("Error saving recycle bin:", error);
+  }
+};
+
 function Desktop() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
   const [openWindows, setOpenWindows] = useState([]);
   const [activeWindowId, setActiveWindowId] = useState(null);
+  const [desktopVisible, setDesktopVisible] = useState(true);
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
@@ -128,6 +161,10 @@ function Desktop() {
   const [showWallpaperSelector, setShowWallpaperSelector] = useState(false);
   const [showCreateShortcut, setShowCreateShortcut] = useState(false);
   const [desktopIcons, setDesktopIcons] = useState(() => loadDesktopIcons());
+  const [recycleBinItems, setRecycleBinItems] = useState(() =>
+    loadRecycleBin()
+  );
+  const [showRecycleBin, setShowRecycleBin] = useState(false);
 
   // Save wallpaper to localStorage whenever it changes
   useEffect(() => {
@@ -138,6 +175,11 @@ function Desktop() {
   useEffect(() => {
     saveDesktopIcons(desktopIcons);
   }, [desktopIcons]);
+
+  // Save recycle bin to localStorage whenever it changes
+  useEffect(() => {
+    saveRecycleBin(recycleBinItems);
+  }, [recycleBinItems]);
 
   const toggleStartMenu = () => {
     setIsStartMenuOpen((prev) => !prev); // Toggle the state
@@ -165,7 +207,7 @@ function Desktop() {
     });
   };
 
-  const openWindow = (id, title, content, image) => {
+  const openWindow = (id, title, content, image, appType) => {
     const existingWindow = openWindows.find((win) => win.id === id);
 
     if (existingWindow) {
@@ -179,6 +221,20 @@ function Desktop() {
     } else {
       // Window does not exist, create a new one.
       nextZIndex++;
+
+      // Set different sizes based on app type
+      let windowConfig = {
+        width: 600,
+        height: 400,
+      };
+
+      if (appType === "notepad") {
+        windowConfig = {
+          width: 800,
+          height: 600,
+        };
+      }
+
       setOpenWindows((prevWindows) => [
         ...prevWindows,
         {
@@ -186,11 +242,12 @@ function Desktop() {
           title: title,
           content: content,
           image: image,
+          appType: appType, // Store the app type
           status: "open",
           x: 100 + prevWindows.length * 20,
           y: 100 + prevWindows.length * 20,
-          width: 600,
-          height: 400,
+          width: windowConfig.width,
+          height: windowConfig.height,
           zIndex: nextZIndex,
         },
       ]);
@@ -267,6 +324,32 @@ function Desktop() {
     );
   };
 
+  const handleShowDesktop = () => {
+    if (desktopVisible) {
+      // Hide all windows (minimize them)
+      setOpenWindows((prevWindows) =>
+        prevWindows.map((win) => ({
+          ...win,
+          status:
+            win.status === "open" || win.status === "maximized"
+              ? "minimized"
+              : win.status,
+        }))
+      );
+      setActiveWindowId(null);
+      setDesktopVisible(false);
+    } else {
+      // Restore all previously minimized windows
+      setOpenWindows((prevWindows) =>
+        prevWindows.map((win) => ({
+          ...win,
+          status: win.status === "minimized" ? "open" : win.status,
+        }))
+      );
+      setDesktopVisible(true);
+    }
+  };
+
   const handleDesktopRightClick = (e) => {
     e.preventDefault();
     setContextMenu({
@@ -276,6 +359,23 @@ function Desktop() {
       type: "desktop",
       targetId: null,
     });
+  };
+
+  const handleDesktopClick = (e) => {
+    // Close start menu if clicking outside it
+    if (isStartMenuOpen) {
+      setIsStartMenuOpen(false);
+    }
+
+    // Close context menu if clicking outside it
+    if (contextMenu.visible) {
+      closeContextMenu();
+    }
+
+    // If desktop is not visible (windows were minimized), restore them
+    if (!desktopVisible) {
+      setDesktopVisible(true);
+    }
   };
 
   const handleIconRightClick = (e, iconId) => {
@@ -405,6 +505,25 @@ function Desktop() {
     setShowCreateShortcut(false);
   };
 
+  const createShortcutFromStartMenu = (
+    name,
+    icon,
+    content,
+    appType,
+    shortcutId
+  ) => {
+    const newShortcut = {
+      id: shortcutId || Date.now().toString(),
+      name: name,
+      image: icon,
+      type: "shortcut",
+      content: content || `Shortcut to ${name}`,
+      action: "custom",
+      app: appType, // Preserve the app type for special apps
+    };
+    setDesktopIcons([...desktopIcons, newShortcut]);
+  };
+
   const deleteIcon = (iconId) => {
     const iconToDelete = desktopIcons.find((icon) => icon.id === iconId);
 
@@ -415,10 +534,61 @@ function Desktop() {
       return;
     }
 
-    setDesktopIcons((prevIcons) =>
-      prevIcons.filter((icon) => icon.id !== iconId)
-    );
+    if (iconToDelete) {
+      // Add deleted item to recycle bin with timestamp
+      const recycleBinItem = {
+        ...iconToDelete,
+        deletedAt: new Date().toISOString(),
+        originalLocation: "Desktop",
+      };
+
+      setRecycleBinItems((prevItems) => [...prevItems, recycleBinItem]);
+
+      // Remove from desktop icons
+      setDesktopIcons((prevIcons) =>
+        prevIcons.filter((icon) => icon.id !== iconId)
+      );
+    }
+
     closeContextMenu();
+  };
+
+  const restoreFromRecycleBin = (itemId) => {
+    const itemToRestore = recycleBinItems.find((item) => item.id === itemId);
+
+    if (itemToRestore) {
+      // Remove from recycle bin
+      setRecycleBinItems((prevItems) =>
+        prevItems.filter((item) => item.id !== itemId)
+      );
+
+      // Add back to desktop icons
+      const restoredItem = {
+        id: itemToRestore.id,
+        name: itemToRestore.name,
+        image: itemToRestore.image,
+        type: itemToRestore.type,
+        content: itemToRestore.content,
+        action: itemToRestore.action,
+        app: itemToRestore.app,
+      };
+
+      setDesktopIcons((prevIcons) => [...prevIcons, restoredItem]);
+    }
+  };
+
+  const permanentDeleteFromRecycleBin = (itemId) => {
+    setRecycleBinItems((prevItems) =>
+      prevItems.filter((item) => item.id !== itemId)
+    );
+  };
+
+  const emptyRecycleBin = () => {
+    setRecycleBinItems([]);
+  };
+
+  const openRecycleBin = () => {
+    setShowRecycleBin(true);
   };
 
   const getDesktopStyle = () => {
@@ -451,20 +621,56 @@ function Desktop() {
   };
 
   return (
-    <div style={getDesktopStyle()} onContextMenu={handleDesktopRightClick}>
+    <div
+      style={getDesktopStyle()}
+      onContextMenu={handleDesktopRightClick}
+      onClick={handleDesktopClick}
+    >
       <div className={styles.desktopIconsContainer}>
         {" "}
         {/* New container for icons */}
         {desktopIcons.map((icon) => (
           <Icon
             key={icon.id}
-            name={icon.name}
+            name={
+              icon.id === "recycle-bin"
+                ? `Recycle Bin${
+                    recycleBinItems.length > 0
+                      ? ` (${recycleBinItems.length})`
+                      : ""
+                  }`
+                : icon.name
+            }
             image={icon.image}
             onDoubleClick={() => {
-              if (icon.type === "shortcut" && icon.action === "custom") {
-                // For custom shortcuts, show an enhanced window
-                const enhancedContent = `Custom Shortcut: ${icon.name} - ${icon.content}`;
-                openWindow(icon.id, icon.name, enhancedContent, icon.image);
+              if (icon.id === "recycle-bin") {
+                // Special handling for recycle bin
+                openRecycleBin();
+              } else if (icon.type === "shortcut" && icon.action === "custom") {
+                // For custom shortcuts, check if they have an app type
+                if (icon.app) {
+                  // For app shortcuts, pass the app type
+                  openWindow(
+                    icon.id,
+                    icon.name,
+                    icon.content,
+                    icon.image,
+                    icon.app
+                  );
+                } else {
+                  // For regular custom shortcuts, show enhanced window
+                  const enhancedContent = `Custom Shortcut: ${icon.name} - ${icon.content}`;
+                  openWindow(icon.id, icon.name, enhancedContent, icon.image);
+                }
+              } else if (icon.app) {
+                // For special apps, pass the app type
+                openWindow(
+                  icon.id,
+                  icon.name,
+                  icon.content,
+                  icon.image,
+                  icon.app
+                );
               } else {
                 // For regular icons, use the default behavior
                 openWindow(icon.id, icon.name, icon.content, icon.image);
@@ -498,7 +704,16 @@ function Desktop() {
             onMaximize={maximizeWindow}
             status={window.status}
           >
-            {window.content} {/* Pass content as children */}
+            {window.appType === "notepad" ? (
+              <Notepad
+                onClose={() => closeWindow(window.id)}
+                onMinimize={() => minimizeWindow(window.id)}
+                onMaximize={() => maximizeWindow(window.id)}
+                isMaximized={window.status === "maximized"}
+              />
+            ) : (
+              window.content
+            )}
           </Window>
         ))}
 
@@ -518,7 +733,11 @@ function Desktop() {
       />
 
       {isStartMenuOpen && (
-        <StartMenu onOpenApp={openWindow} onCloseMenu={toggleStartMenu} />
+        <StartMenu
+          onOpenApp={openWindow}
+          onCloseMenu={toggleStartMenu}
+          onCreateShortcut={createShortcutFromStartMenu}
+        />
       )}
       <Taskbar
         onStartButtonClick={toggleStartMenu}
@@ -526,6 +745,7 @@ function Desktop() {
         onFocus={bringWindowToFront}
         activeWindowId={activeWindowId}
         onMinimize={minimizeWindow}
+        onShowDesktop={handleShowDesktop}
       />
 
       {/* Wallpaper Selector */}
@@ -541,6 +761,16 @@ function Desktop() {
         visible={showCreateShortcut}
         onCreateShortcut={createNewShortcut}
         onCancel={() => setShowCreateShortcut(false)}
+      />
+
+      {/* Recycle Bin */}
+      <RecycleBin
+        isOpen={showRecycleBin}
+        onClose={() => setShowRecycleBin(false)}
+        recycleBinItems={recycleBinItems}
+        onRestoreItem={restoreFromRecycleBin}
+        onPermanentDelete={permanentDeleteFromRecycleBin}
+        onEmptyRecycleBin={emptyRecycleBin}
       />
     </div>
   );

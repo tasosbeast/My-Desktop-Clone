@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./Taskbar.module.css";
 import StartButton from "./StartButton";
-import Clock from "./clock";
+import SystemTray from "./SystemTray";
 import TaskbarIcon from "./TaskbarIcon";
 
 export default function Taskbar({
@@ -10,6 +10,7 @@ export default function Taskbar({
   onFocus,
   activeWindowId,
   onMinimize,
+  onShowDesktop,
 }) {
   return (
     <div className={styles.taskbar}>
@@ -40,8 +41,7 @@ export default function Taskbar({
         ))}
       </div>
       <div className={styles.taskbarRight}>
-        {/* System tray icons & clock will go here */}
-        <Clock />
+        <SystemTray onShowDesktop={onShowDesktop} />
       </div>
     </div>
   );

@@ -1,0 +1,178 @@
+.notepad {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #ffffff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.menuBar {
+  display: flex;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0;
+  user-select: none;
+}
+
+.menuItem {
+  position: relative;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.menuItem:hover {
+  background-color: #e6f3ff;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 200px;
+  padding: 4px 0;
+}
+
+.menuOption {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.menuOption:hover {
+  background-color: #f0f0f0;
+}
+
+.shortcut {
+  font-size: 12px;
+  color: #666;
+  margin-left: 20px;
+}
+
+.separator {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 4px 0;
+}
+
+.submenu {
+  position: relative;
+}
+
+.submenu:hover .submenuDropdown {
+  display: block;
+}
+
+.submenuDropdown {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  min-width: 100px;
+  padding: 4px 0;
+}
+
+.textArea {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 16px;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: none;
+  background-color: white;
+  color: #333;
+}
+
+.textArea:focus {
+  outline: none;
+}
+
+.statusBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+  padding: 4px 16px;
+  font-size: 12px;
+  color: #666;
+  height: 24px;
+}
+
+.statusLeft {
+  display: flex;
+  align-items: center;
+}
+
+.statusRight {
+  display: flex;
+  align-items: center;
+}
+
+/* Scrollbar styling for webkit browsers */
+.textArea::-webkit-scrollbar {
+  width: 12px;
+}
+
+.textArea::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.textArea::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 6px;
+}
+
+.textArea::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Menu animations */
+.dropdown {
+  animation: dropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Disabled menu options */
+.menuOption.disabled {
+  color: #999;
+  cursor: not-allowed;
+}
+
+.menuOption.disabled:hover {
+  background-color: transparent;
+}
+
+/* Selection styling */
+.textArea::selection {
+  background-color: #0078d4;
+  color: white;
+}

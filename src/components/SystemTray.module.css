@@ -1,0 +1,176 @@
+.systemTray {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 8px;
+  position: relative;
+}
+
+.systemTrayIcons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.systemTrayIcon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.systemTrayIcon:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.systemTrayIcon:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.iconSymbol {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.separator {
+  width: 1px;
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0.2);
+  margin: 0 4px;
+}
+
+.clockSection {
+  display: flex;
+  align-items: center;
+}
+
+.showDesktopButton {
+  width: 6px;
+  height: 28px;
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+  border-radius: 2px;
+}
+
+.showDesktopButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.showDesktopButton:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.systemTrayMenu {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  width: 280px;
+  background-color: rgba(45, 45, 45, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  color: white;
+  padding: 16px;
+  z-index: 1001;
+  animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menuHeader h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+}
+
+.quickActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.quickAction {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.quickAction:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.toggle {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background-color: rgba(0, 120, 215, 0.8);
+  color: white;
+}
+
+.quickAction .toggle {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.menuFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.menuFooter button {
+  background-color: rgba(0, 120, 215, 0.8);
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.menuFooter button:hover {
+  background-color: rgba(0, 120, 215, 1);
+}
+
+/* Tooltip styles for system tray icons */
+.systemTrayIcon[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(45, 45, 45, 0.95);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1002;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
