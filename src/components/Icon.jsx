@@ -10,6 +10,21 @@ function Icon({
   isRenaming,
   onFinishRename,
   onCancelRename,
+  // Position props
+  x = 0,
+  y = 0,
+  // Selection state
+  isSelected = false,
+  iconId,
+  // Drag and drop props
+  draggable = false,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  isDragOver = false,
+  isDragging = false,
 }) {
   const [editingName, setEditingName] = useState(name);
   const inputRef = useRef(null);
@@ -52,10 +67,25 @@ function Icon({
 
   return (
     <div
-      className={styles.icon}
+      className={`${styles.icon} ${isDragOver ? styles.dragOver : ""} ${
+        isDragging ? styles.dragging : ""
+      } ${isSelected ? styles.selected : ""}`}
+      style={{
+        position: "absolute",
+        left: x,
+        top: y,
+        transform: isDragging ? "rotate(5deg)" : "none",
+      }}
+      data-icon-id={iconId}
       onClick={onClick}
       onDoubleClick={onDoubleClick}
       onContextMenu={handleContextMenu}
+      draggable={draggable}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
     >
       <img src={image} alt={name} className={styles.iconImage} />
       {isRenaming ? (

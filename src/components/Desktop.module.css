@@ -9,13 +9,44 @@
 }
 
 .desktopIconsContainer {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  align-content: flex-start; /* Align icons to the top */
   position: absolute;
-  top: 0px; /* Start from the top */
-  left: 0px; /* Start from the left */
-  width: 100%; /* Full width of the desktop */
+  top: 0;
+  left: 0;
+  width: 100%;
   height: calc(100% - 48px); /* Full height minus taskbar */
+  /* Remove flex properties to allow absolute positioning of children */
+}
+
+/* Grid overlay for drag operations */
+.gridOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 100px 100px; /* Match grid size */
+  background-position: 20px 20px; /* Match padding */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.gridOverlay.visible {
+  opacity: 1;
+}
+
+/* Selection box for multi-select */
+.selectionBox {
+  position: absolute;
+  border: 3px solid #0078d4;
+  background-color: rgba(0, 120, 212, 0.2);
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 120, 212, 0.5);
 }
