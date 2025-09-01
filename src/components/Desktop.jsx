@@ -1,12 +1,114 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Desktop.module.css";
 import Taskbar from "./Taskbar";
 import StartMenu from "./StartMenu";
 import Icon from "./Icon";
 import Window from "./Window";
 import ContextMenu from "./ContextMenu";
+import WallpaperSelector from "./WallpaperSelector";
+import CreateShortcutDialog from "./CreateShortcutDialog";
 
 let nextZIndex = 1001;
+
+// Default wallpaper
+const defaultWallpaper = {
+  id: "default",
+  name: "Windows 11 Default",
+  image: "/Windows-11-bg.webp",
+};
+
+// Function to load wallpaper from localStorage
+const loadWallpaper = () => {
+  try {
+    const saved = localStorage.getItem("desktopWallpaper");
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch (error) {
+    console.error("Error loading wallpaper:", error);
+  }
+  return defaultWallpaper;
+};
+
+// Function to save wallpaper to localStorage
+const saveWallpaper = (wallpaper) => {
+  try {
+    localStorage.setItem("desktopWallpaper", JSON.stringify(wallpaper));
+  } catch (error) {
+    console.error("Error saving wallpaper:", error);
+  }
+};
+
+// Default desktop icons
+const defaultDesktopIcons = [
+  {
+    id: "recycle-bin",
+    name: "Recycle Bin",
+    image: "/recycle-bin.png",
+    type: "system",
+    content: "Deleted Items",
+  },
+  {
+    id: "vscode",
+    name: "VS Code",
+    image: "/icons8-visual-studio-code.svg",
+    type: "app",
+    content: "VS Code Editor",
+  },
+  {
+    id: "chrome",
+    name: "Google Chrome",
+    image: "/icons8-google-chrome.svg",
+    type: "app",
+    content: "Web Browser",
+  },
+  {
+    id: "github",
+    name: "Github Desktop",
+    image: "/icons8-github.svg",
+    type: "app",
+    content: "github desktop app",
+  },
+];
+
+// Function to load desktop icons from localStorage
+const loadDesktopIcons = () => {
+  try {
+    const saved = localStorage.getItem("desktopIcons");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Ensure we always have the system icons
+      const systemIcons = defaultDesktopIcons.filter(
+        (icon) => icon.type === "system"
+      );
+      const savedNonSystemIcons = parsed.filter(
+        (icon) => icon.type !== "system"
+      );
+
+      // Merge system icons with saved icons, updating system icon names if they were renamed
+      const mergedIcons = systemIcons.map((systemIcon) => {
+        const savedVersion = parsed.find((saved) => saved.id === systemIcon.id);
+        return savedVersion
+          ? { ...systemIcon, name: savedVersion.name }
+          : systemIcon;
+      });
+
+      return [...mergedIcons, ...savedNonSystemIcons];
+    }
+  } catch (error) {
+    console.error("Error loading desktop icons:", error);
+  }
+  return defaultDesktopIcons;
+};
+
+// Function to save desktop icons to localStorage
+const saveDesktopIcons = (icons) => {
+  try {
+    localStorage.setItem("desktopIcons", JSON.stringify(icons));
+  } catch (error) {
+    console.error("Error saving desktop icons:", error);
+  }
+};
 
 function Desktop() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
@@ -20,36 +122,23 @@ function Desktop() {
     targetId: null,
   });
   const [renamingIcon, setRenamingIcon] = useState(null);
-  const [desktopIcons, setDesktopIcons] = useState([
-    {
-      id: "recycle-bin",
-      name: "Recycle Bin",
-      image: "/recycle-bin.png",
-      type: "system",
-      content: "Deleted Items",
-    },
-    {
-      id: "vscode",
-      name: "VS Code",
-      image: "/icons8-visual-studio-code.svg",
-      type: "app",
-      content: "VS Code Editor",
-    },
-    {
-      id: "chrome",
-      name: "Google Chrome",
-      image: "/icons8-google-chrome.svg",
-      type: "app",
-      content: "Web Browser",
-    },
-    {
-      id: "github",
-      name: "Github Desktop",
-      image: "/icons8-github.svg",
-      type: "app",
-      content: "github desktop app",
-    },
-  ]);
+  const [currentWallpaper, setCurrentWallpaper] = useState(() =>
+    loadWallpaper()
+  );
+  const [showWallpaperSelector, setShowWallpaperSelector] = useState(false);
+  const [showCreateShortcut, setShowCreateShortcut] = useState(false);
+  const [desktopIcons, setDesktopIcons] = useState(() => loadDesktopIcons());
+
+  // Save wallpaper to localStorage whenever it changes
+  useEffect(() => {
+    saveWallpaper(currentWallpaper);
+  }, [currentWallpaper]);
+
+  // Save desktop icons to localStorage whenever they change
+  useEffect(() => {
+    saveDesktopIcons(desktopIcons);
+  }, [desktopIcons]);
+
   const toggleStartMenu = () => {
     setIsStartMenuOpen((prev) => !prev); // Toggle the state
   };
@@ -214,10 +303,21 @@ function Desktop() {
   const getDesktopContextMenuItems = () => [
     {
       icon: "🖼️",
-      label: "Personalize",
-      action: () => console.log("Personalize clicked"),
+      label: "Change Wallpaper",
+      action: () => {
+        closeContextMenu();
+        setShowWallpaperSelector(true);
+      },
     },
     { type: "separator" },
+    {
+      icon: "➕",
+      label: "New Shortcut",
+      action: () => {
+        closeContextMenu();
+        setShowCreateShortcut(true);
+      },
+    },
     {
       icon: "📁",
       label: "New Folder",
@@ -243,7 +343,10 @@ function Desktop() {
       {
         icon: "🚀",
         label: "Open",
-        action: () => openWindow(icon.id, icon.name, icon.content, icon.image),
+        action: () => {
+          closeContextMenu();
+          openWindow(icon.id, icon.name, icon.content, icon.image);
+        },
       },
       { type: "separator" },
       {
@@ -254,7 +357,7 @@ function Desktop() {
       {
         icon: "🗑️",
         label: "Delete",
-        action: () => console.log(`Delete ${iconId}`),
+        action: () => deleteIcon(iconId),
       },
       { type: "separator" },
       {
@@ -267,6 +370,7 @@ function Desktop() {
 
   const startRenaming = (iconId) => {
     setRenamingIcon(iconId);
+    closeContextMenu();
   };
 
   const finishRenaming = (iconId, newName) => {
@@ -283,8 +387,71 @@ function Desktop() {
   const cancelRenaming = () => {
     setRenamingIcon(null);
   };
+
+  const handleWallpaperSelect = (wallpaper) => {
+    setCurrentWallpaper(wallpaper);
+  };
+
+  const createNewShortcut = (name, icon, content) => {
+    const newShortcut = {
+      id: Date.now().toString(),
+      name: name,
+      image: icon,
+      type: "shortcut",
+      content: content || `Shortcut to ${name}`,
+      action: "custom", // Add an action type for custom shortcuts
+    };
+    setDesktopIcons([...desktopIcons, newShortcut]);
+    setShowCreateShortcut(false);
+  };
+
+  const deleteIcon = (iconId) => {
+    const iconToDelete = desktopIcons.find((icon) => icon.id === iconId);
+
+    // Prevent deletion of system icons
+    if (iconToDelete && iconToDelete.type === "system") {
+      alert("System icons cannot be deleted.");
+      closeContextMenu();
+      return;
+    }
+
+    setDesktopIcons((prevIcons) =>
+      prevIcons.filter((icon) => icon.id !== iconId)
+    );
+    closeContextMenu();
+  };
+
+  const getDesktopStyle = () => {
+    const baseStyle = {
+      width: "100%",
+      height: "100%",
+      position: "relative",
+    };
+
+    if (currentWallpaper.image) {
+      return {
+        ...baseStyle,
+        backgroundImage: `url(${currentWallpaper.image})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      };
+    } else if (currentWallpaper.gradient) {
+      return {
+        ...baseStyle,
+        background: currentWallpaper.gradient,
+      };
+    } else if (currentWallpaper.color) {
+      return {
+        ...baseStyle,
+        backgroundColor: currentWallpaper.color,
+      };
+    }
+    return baseStyle;
+  };
+
   return (
-    <div className={styles.desktop} onContextMenu={handleDesktopRightClick}>
+    <div style={getDesktopStyle()} onContextMenu={handleDesktopRightClick}>
       <div className={styles.desktopIconsContainer}>
         {" "}
         {/* New container for icons */}
@@ -293,9 +460,16 @@ function Desktop() {
             key={icon.id}
             name={icon.name}
             image={icon.image}
-            onDoubleClick={() =>
-              openWindow(icon.id, icon.name, icon.content, icon.image)
-            }
+            onDoubleClick={() => {
+              if (icon.type === "shortcut" && icon.action === "custom") {
+                // For custom shortcuts, show an enhanced window
+                const enhancedContent = `Custom Shortcut: ${icon.name} - ${icon.content}`;
+                openWindow(icon.id, icon.name, enhancedContent, icon.image);
+              } else {
+                // For regular icons, use the default behavior
+                openWindow(icon.id, icon.name, icon.content, icon.image);
+              }
+            }}
             onRightClick={(e) => handleIconRightClick(e, icon.id)}
             isRenaming={renamingIcon === icon.id}
             onFinishRename={(newName) => finishRenaming(icon.id, newName)}
@@ -352,6 +526,21 @@ function Desktop() {
         onFocus={bringWindowToFront}
         activeWindowId={activeWindowId}
         onMinimize={minimizeWindow}
+      />
+
+      {/* Wallpaper Selector */}
+      <WallpaperSelector
+        isOpen={showWallpaperSelector}
+        onClose={() => setShowWallpaperSelector(false)}
+        onSelectWallpaper={handleWallpaperSelect}
+        currentWallpaper={currentWallpaper}
+      />
+
+      {/* Create Shortcut Dialog */}
+      <CreateShortcutDialog
+        visible={showCreateShortcut}
+        onCreateShortcut={createNewShortcut}
+        onCancel={() => setShowCreateShortcut(false)}
       />
     </div>
   );
