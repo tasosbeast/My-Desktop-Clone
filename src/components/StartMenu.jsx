@@ -143,6 +143,7 @@ function StartMenu({ onOpenApp, onCloseMenu, onCreateShortcut }) {
             key={item.id}
             name={item.name}
             image={item.image}
+            positioning="static"
             onClick={() => handleAppClick(item)}
             onRightClick={(e) => handleRightClick(e, item)}
           />

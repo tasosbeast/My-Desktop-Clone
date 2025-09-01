@@ -7,6 +7,7 @@ import Window from "./Window";
 import ContextMenu from "./ContextMenu";
 import WallpaperSelector from "./WallpaperSelector";
 import CreateShortcutDialog from "./CreateShortcutDialog";
+import Settings from "./Settings";
 import Notepad from "./Notepad";
 import RecycleBin from "./RecycleBin";
 import Calculator from "./Calculator";
@@ -111,6 +112,16 @@ const defaultDesktopIcons = [
     x: 20,
     y: 620,
   },
+  {
+    id: "settings",
+    name: "Settings",
+    image: "/icons8-windows-11.svg",
+    type: "app",
+    content: "System Settings",
+    app: "settings",
+    x: 20,
+    y: 720,
+  },
 ];
 
 // Function to load desktop icons from localStorage
@@ -210,6 +221,7 @@ function Desktop() {
   );
   const [showWallpaperSelector, setShowWallpaperSelector] = useState(false);
   const [showCreateShortcut, setShowCreateShortcut] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [desktopIcons, setDesktopIcons] = useState(() => loadDesktopIcons());
   const [recycleBinItems, setRecycleBinItems] = useState(() =>
     loadRecycleBin()
@@ -224,7 +236,8 @@ function Desktop() {
   // Multi-selection state
   const [selectedIcons, setSelectedIcons] = useState(new Set());
   const [isBoxSelecting, setIsBoxSelecting] = useState(false);
-  const [justFinishedBoxSelection, setJustFinishedBoxSelection] = useState(false);
+  const [justFinishedBoxSelection, setJustFinishedBoxSelection] =
+    useState(false);
   const [selectionBox, setSelectionBox] = useState({
     startX: 0,
     startY: 0,
@@ -237,6 +250,11 @@ function Desktop() {
     endX: 0,
     endY: 0,
   });
+
+  // Search functionality state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [filteredIcons, setFilteredIcons] = useState(desktopIcons);
 
   // Save wallpaper to localStorage whenever it changes
   useEffect(() => {
@@ -257,6 +275,32 @@ function Desktop() {
   useEffect(() => {
     console.log("selectedIcons changed:", Array.from(selectedIcons));
   }, [selectedIcons]);
+
+  // Update filtered icons when search term or desktop icons change
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setFilteredIcons(desktopIcons);
+    } else {
+      const filtered = desktopIcons.filter(
+        (icon) =>
+          icon.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          icon.content?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredIcons(filtered);
+    }
+  }, [searchTerm, desktopIcons]);
+
+  // Search handlers
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+  };
+
+  const toggleSearch = () => {
+    setIsSearchActive(!isSearchActive);
+    if (isSearchActive) {
+      setSearchTerm("");
+    }
+  };
 
   const toggleStartMenu = () => {
     setIsStartMenuOpen((prev) => !prev); // Toggle the state
@@ -449,14 +493,11 @@ function Desktop() {
   };
 
   const handleDesktopClick = (e) => {
-    console.log("handleDesktopClick triggered, isBoxSelecting:", isBoxSelecting, "justFinished:", justFinishedBoxSelection);
-    
     // Don't process click if we just finished a box selection
     if (justFinishedBoxSelection) {
-      console.log("Ignoring click - just finished box selection");
       return;
     }
-    
+
     // Close start menu if clicking outside it
     if (isStartMenuOpen) {
       setIsStartMenuOpen(false);
@@ -474,26 +515,15 @@ function Desktop() {
 
     // Don't clear selection if we're box selecting or if it's an icon click
     const clickedOnIcon = e.target.closest("[data-icon-id]");
-    
-    console.log("Desktop click - should clear selection?", {
-      ctrlKey: e.ctrlKey,
-      metaKey: e.metaKey,
-      clickedOnIcon: !!clickedOnIcon,
-      isBoxSelecting,
-      willClear: !e.ctrlKey && !e.metaKey && !clickedOnIcon && !isBoxSelecting
-    });
-    
+
     // Clear selection if clicking on empty space (not Ctrl+click) and not on an icon
     if (!e.ctrlKey && !e.metaKey && !clickedOnIcon && !isBoxSelecting) {
-      console.log("Clearing selection");
       setSelectedIcons(new Set());
     }
   };
 
   // Box selection handlers
   const handleMouseDown = (e) => {
-    console.log("handleMouseDown triggered", e.target);
-    
     // Only start box selection if clicking on empty desktop space
     const isDesktopSpace =
       e.target.getAttribute("data-desktop-container") === "true" ||
@@ -504,19 +534,11 @@ function Desktop() {
     // Also check that we didn't click on an icon
     const clickedOnIcon = e.target.closest("[data-icon-id]");
 
-    console.log("Box selection check:", {
-      isDesktopSpace,
-      clickedOnIcon: !!clickedOnIcon,
-      shouldStart: isDesktopSpace && !clickedOnIcon
-    });
-
     if (isDesktopSpace && !clickedOnIcon) {
       e.preventDefault(); // Prevent text selection
       const rect = e.currentTarget.getBoundingClientRect();
       const startX = e.clientX - rect.left;
       const startY = e.clientY - rect.top;
-
-      console.log("Starting box selection at:", { startX, startY });
 
       // Update both state and ref
       const newBox = {
@@ -525,7 +547,7 @@ function Desktop() {
         endX: startX,
         endY: startY,
       };
-      
+
       setIsBoxSelecting(true);
       setSelectionBox(newBox);
       selectionBoxRef.current = newBox;
@@ -539,7 +561,6 @@ function Desktop() {
 
   const handleMouseMove = (e) => {
     if (isBoxSelecting) {
-      console.log("handleMouseMove during box selection");
       const rect = e.currentTarget.getBoundingClientRect();
       const endX = e.clientX - rect.left;
       const endY = e.clientY - rect.top;
@@ -552,7 +573,7 @@ function Desktop() {
       };
 
       // Update state for rendering
-      setSelectionBox(prev => ({
+      setSelectionBox((prev) => ({
         ...prev,
         endX,
         endY,
@@ -582,13 +603,11 @@ function Desktop() {
         }
       });
 
-      console.log("Icons in box during move:", Array.from(iconsInBox));
-
       // Update selected icons during drag for visual feedback
-      setSelectedIcons(prev => {
+      setSelectedIcons((prev) => {
         if (e.ctrlKey || e.metaKey) {
           const newSet = new Set(prev);
-          iconsInBox.forEach(id => newSet.add(id));
+          iconsInBox.forEach((id) => newSet.add(id));
           return newSet;
         } else {
           return iconsInBox;
@@ -598,16 +617,24 @@ function Desktop() {
   };
 
   const handleMouseUp = (e) => {
-    console.log("handleMouseUp triggered, isBoxSelecting:", isBoxSelecting);
-    
     if (isBoxSelecting) {
-      console.log("Ending box selection");
-      
       // Use ref values for final calculation to avoid stale state
-      const boxLeft = Math.min(selectionBoxRef.current.startX, selectionBoxRef.current.endX);
-      const boxTop = Math.min(selectionBoxRef.current.startY, selectionBoxRef.current.endY);
-      const boxRight = Math.max(selectionBoxRef.current.startX, selectionBoxRef.current.endX);
-      const boxBottom = Math.max(selectionBoxRef.current.startY, selectionBoxRef.current.endY);
+      const boxLeft = Math.min(
+        selectionBoxRef.current.startX,
+        selectionBoxRef.current.endX
+      );
+      const boxTop = Math.min(
+        selectionBoxRef.current.startY,
+        selectionBoxRef.current.endY
+      );
+      const boxRight = Math.max(
+        selectionBoxRef.current.startX,
+        selectionBoxRef.current.endX
+      );
+      const boxBottom = Math.max(
+        selectionBoxRef.current.startY,
+        selectionBoxRef.current.endY
+      );
 
       const iconsInBox = new Set();
       desktopIcons.forEach((icon) => {
@@ -627,13 +654,11 @@ function Desktop() {
         }
       });
 
-      console.log("Final selected icons:", Array.from(iconsInBox));
-      
       // If Ctrl is held, add to existing selection, otherwise replace
       if (e.ctrlKey || e.metaKey) {
-        setSelectedIcons(prev => {
+        setSelectedIcons((prev) => {
           const newSet = new Set(prev);
-          iconsInBox.forEach(id => newSet.add(id));
+          iconsInBox.forEach((id) => newSet.add(id));
           return newSet;
         });
       } else {
@@ -642,7 +667,7 @@ function Desktop() {
 
       setIsBoxSelecting(false);
       setJustFinishedBoxSelection(true);
-      
+
       // Clear the flag after a short delay to prevent click interference
       setTimeout(() => {
         setJustFinishedBoxSelection(false);
@@ -874,6 +899,15 @@ function Desktop() {
       shortcut: "F5",
       action: () => console.log("Refresh clicked"),
     },
+    { type: "separator" },
+    {
+      icon: "⚙️",
+      label: "Settings",
+      action: () => {
+        closeContextMenu();
+        setShowSettings(true);
+      },
+    },
   ];
 
   const getIconContextMenuItems = (iconId) => {
@@ -1092,7 +1126,7 @@ function Desktop() {
       <div className={styles.desktopIconsContainer}>
         {" "}
         {/* New container for icons */}
-        {desktopIcons.map((icon, index) => (
+        {filteredIcons.map((icon, index) => (
           <Icon
             key={icon.id}
             name={
@@ -1112,6 +1146,9 @@ function Desktop() {
               if (icon.id === "recycle-bin") {
                 // Special handling for recycle bin
                 openRecycleBin();
+              } else if (icon.id === "settings" || icon.app === "settings") {
+                // Special handling for settings
+                setShowSettings(true);
               } else if (icon.type === "shortcut" && icon.action === "custom") {
                 // For custom shortcuts, check if they have an app type
                 if (icon.app) {
@@ -1239,6 +1276,9 @@ function Desktop() {
         activeWindowId={activeWindowId}
         onMinimize={minimizeWindow}
         onShowDesktop={handleShowDesktop}
+        onSearch={handleSearch}
+        isSearchActive={isSearchActive}
+        onToggleSearch={toggleSearch}
       />
 
       {/* Wallpaper Selector */}
@@ -1264,6 +1304,16 @@ function Desktop() {
         onRestoreItem={restoreFromRecycleBin}
         onPermanentDelete={permanentDeleteFromRecycleBin}
         onEmptyRecycleBin={emptyRecycleBin}
+      />
+
+      {/* Settings Panel */}
+      <Settings
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        currentWallpaper={currentWallpaper}
+        onWallpaperChange={handleWallpaperSelect}
+        desktopIcons={desktopIcons}
+        onIconSettingsChange={() => {}}
       />
     </div>
   );

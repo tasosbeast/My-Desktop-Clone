@@ -13,6 +13,8 @@ function Icon({
   // Position props
   x = 0,
   y = 0,
+  // Layout mode - 'absolute' for desktop, 'static' for start menu
+  positioning = "absolute",
   // Selection state
   isSelected = false,
   iconId,
@@ -69,11 +71,13 @@ function Icon({
     <div
       className={`${styles.icon} ${isDragOver ? styles.dragOver : ""} ${
         isDragging ? styles.dragging : ""
-      } ${isSelected ? styles.selected : ""}`}
+      } ${isSelected ? styles.selected : ""} ${
+        positioning === "static" ? styles.staticIcon : ""
+      }`}
       style={{
-        position: "absolute",
-        left: x,
-        top: y,
+        position: positioning,
+        left: positioning === "absolute" ? x : undefined,
+        top: positioning === "absolute" ? y : undefined,
         transform: isDragging ? "rotate(5deg)" : "none",
       }}
       data-icon-id={iconId}

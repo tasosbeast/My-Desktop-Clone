@@ -26,6 +26,10 @@
   height: 100%; /* Make sure they take full taskbar height */
 }
 
+.taskbarLeft {
+  gap: 12px; /* Add spacing between weather widget, start button, and search */
+}
+
 .taskbarCenter {
   /* Windows 11 centers the app icons, but not the whole section */
   /* We'll handle this more precisely when adding icons */

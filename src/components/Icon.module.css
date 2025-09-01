@@ -15,6 +15,15 @@
   box-sizing: border-box; /* Include padding in width/height */
 }
 
+/* Static positioning for start menu icons */
+.staticIcon {
+  position: static !important;
+  width: 80px !important;
+  height: 80px !important;
+  margin: 0px 5px 0px 5px;
+  flex-shrink: 0;
+}
+
 .icon:hover {
   background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
   border-radius: 5px;
@@ -72,8 +81,8 @@
 
 /* Selected icon style */
 .icon.selected {
-  background-color: rgba(255, 0, 0, 0.5) !important;
-  border: 3px solid red !important;
+  background-color: rgba(0, 120, 212, 0.2) !important;
+  border: 2px solid #0078d4 !important;
   border-radius: 8px;
-  transform: scale(1.1) !important;
+  box-shadow: 0 0 8px rgba(0, 120, 212, 0.4);
 }

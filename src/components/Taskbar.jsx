@@ -3,6 +3,8 @@ import styles from "./Taskbar.module.css";
 import StartButton from "./StartButton";
 import SystemTray from "./SystemTray";
 import TaskbarIcon from "./TaskbarIcon";
+import TaskbarSearch from "./TaskbarSearch";
+import WeatherWidget from "./WeatherWidget";
 
 export default function Taskbar({
   onStartButtonClick,
@@ -11,11 +13,20 @@ export default function Taskbar({
   activeWindowId,
   onMinimize,
   onShowDesktop,
+  onSearch,
+  isSearchActive,
+  onToggleSearch,
 }) {
   return (
     <div className={styles.taskbar}>
       <div className={styles.taskbarLeft}>
+        <WeatherWidget />
         <StartButton onClick={onStartButtonClick} />
+        <TaskbarSearch
+          onSearch={onSearch}
+          isSearchActive={isSearchActive}
+          onToggleSearch={onToggleSearch}
+        />
       </div>
       <div className={styles.taskbarCenter}>
         {openWindows.map((win) => (
